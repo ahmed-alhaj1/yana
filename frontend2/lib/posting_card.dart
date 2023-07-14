@@ -1,95 +1,155 @@
+import 'dart:io';
+import 'package:permission_handler/permission_handler.dart';
+
 import 'package:flutter/material.dart';
 import 'common.dart';
 //import 'package:flutter/material.dart';
-import 'post_page.dart';
+//import 'post_page.dart';
 import 'DemoValue.dart';
+import 'store.dart';
+import 'package:provider/provider.dart';
 
 class PostCard extends StatelessWidget {
-  late String data;
-  PostCard({Key? key}) : super(key: key);
+  final PostResult pdata;
+  PostCard({Key? key, required this.pdata}) : super(key: key);
   //final string data;
+  //var date = pdata.time.split('.');
   @override
   Widget build(BuildContext context) {
-    final double aspectRatio = isLandscape(context) ? 6 / 2 : 6 / 3;
-    return AspectRatio(
-      aspectRatio: 5 / 2,
-      child: Card(
-        child: Column(
-          children: <Widget>[_Post(), _PostDetails()],
-        ),
+    //final store = Provider.of<Store>(context);
+    final double aspectRatioL = isLandscape(context) ? 6 / 2 : 2;
+    final tdate = pdata.time.split('.')[0];
+    //return Expanded(
+    //    child: AspectRatio(
+    //  aspectRatio: aspectRatioL,
+    //SizedBox(height: 10,)
+    return Card(
+      //height: MediaQuery.of(context).size.height,
+      //width: MediaQuery.of(context).size.width,
+      child: Column(
+        children: <Widget>[
+          //height: MediaQuery.of(context).size.height,
+          //width: MediaQuery.of(context).size.width,
+          //const _PostDetails(),
+          //const Divider(color: Colors.grey),
+          //_Post(
+          //  summary: pdata.location,
+          //   imgUrl: pdata.imgUrl,
+          //   title: pdata.title),
+          ListTile(
+            title: Text(pdata.title),
+            subtitle: Text(pdata.description),
+            trailing: Text(tdate),
+          ),
+
+          pdata.imgUrl.contains('assets') == false
+              ? Container(
+                  height: 200.0,
+                  child: Image.file(
+                    File(pdata.imgUrl),
+                    fit: BoxFit.cover,
+                  ),
+                )
+              : Container(
+                  height: 200,
+                  child: Image(
+                    image: AssetImage(DemoValue.postImage),
+                    fit: BoxFit.fill,
+                  ),
+                ),
+          Container(
+            padding: EdgeInsets.all(16.0),
+            alignment: Alignment.centerLeft,
+            child: Text(pdata.location),
+          ),
+        ],
       ),
     );
   }
-}
-/*
-    return GestureDetector(
-        onTap: () {
-          Navigator.push(context,
-              MaterialPageRoute(builder: (BuildContext context) {
-            return PostPage(data: data);
-          }));
-        },
-        child: AspectRatio(
-          aspectRatio: aspectRatio,
-          child: Card(
-            elevation: 2,
-            child: Container(
-              margin: const EdgeInsets.all(4.0),
-              padding: const EdgeInsets.all(4.0),
-              post_data: data,
-              child: Column(
-                children: <Widget>[
-                  _Post(),
-                  Divider(color: Colors.grey),
-                  _PostDetail(),
-                ],
-              ),
-            ),
-          ),
-        ));
 
-
-  }
+//  factory PostCard.fromJson(dynamic res) {
+  //  return PostCard(
+  //    summary: res.description, location: res.location, time: res.time);
+  //}
 }
-*/
 
 class _Post extends StatelessWidget {
-  const _Post({Key? key}) : super(key: key);
+  final String summary;
+  final String imgUrl;
+  final String title;
+  const _Post(
+      {Key? key,
+      required this.summary,
+      required this.imgUrl,
+      required this.title})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    //String image;
     return Expanded(
-      flex: 3,
-      child: Row(
-        children: <Widget>[_PostImage(), _PostSummary()],
+      //flex: 3,
+      child: Column(
+        //mainAxisAlignment: MainAxisAlignment.spaceAround,
+        //runAlignment: WrapAlignment.spaceBetween,
+        children: <Widget>[
+          _PostSummary(summary: summary, title: title),
+          const Divider(
+            height: 10,
+          ),
+          _PostImage(imgUrl: imgUrl),
+        ],
       ),
     );
   }
 }
 
 class _PostImage extends StatelessWidget {
-  const _PostImage({Key? key}) : super(key: key);
+  final String imgUrl;
+  const _PostImage({Key? key, required this.imgUrl}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(flex: 2, child: Image.asset(DemoValue.postImage));
+    final path = Directory(imgUrl);
+
+    final status = Permission.storage.request().isGranted;
+    if (imgUrl.contains('assets') == false) {
+      return Image.file(
+        File(imgUrl),
+        fit: BoxFit.cover,
+        height: 200,
+        width: 200,
+      );
+    } else {
+      return Image(
+        image: AssetImage(DemoValue.postImage),
+        fit: BoxFit.fill,
+        height: 200,
+        width: 200,
+      );
+    }
   }
 }
 
 class _PostSummary extends StatelessWidget {
-  const _PostSummary({Key? key}) : super(key: key);
+  final String summary;
+  final String title;
+  const _PostSummary({Key? key, required this.summary, required this.title})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     //final TextStyle t
-    final String title = DemoValue.postTitle;
-    final String summary = DemoValue.postSummary;
+
+    //final String title = title ;
+    //final String summary = DemoValue.postSummary;
 
     return Expanded(
         flex: 3,
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          //fit:3
           mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Text(title),
             Text(summary),
@@ -112,12 +172,13 @@ class _UserData extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final store = Provider.of<Store>(context);
     return Expanded(
       flex: 7,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[Text(DemoValue.userName), Text(DemoValue.Email)],
+        children: <Widget>[Text(store.getuser()), Text(DemoValue.Email)],
       ),
     );
   }
@@ -133,5 +194,34 @@ class _UserImage extends StatelessWidget {
         backgroundImage: AssetImage(DemoValue.userImage),
       ),
     );
+  }
+}
+
+class PostResult {
+  final String id;
+  final String username;
+  final String title;
+  final String imgUrl;
+  final String location;
+  final String description;
+  final String time;
+  PostResult(
+      {Key? key,
+      required this.id,
+      required this.username,
+      required this.title,
+      required this.imgUrl,
+      required this.location,
+      required this.description,
+      required this.time});
+  factory PostResult.fromJson(dynamic res) {
+    return PostResult(
+        id: res.id.toString(),
+        username: res.name,
+        title: res.title,
+        imgUrl: res.mediaUrl,
+        description: res.description,
+        location: res.location,
+        time: res.time);
   }
 }
