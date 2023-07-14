@@ -1,0 +1,170 @@
+syntax = 'proto3';
+package yana;
+option go_package = "./yana";
+
+//import "google/protobuf/empty.proto";
+//import "google/protobuf/wrappers.proto";
+
+
+message RegisterRequest{
+    string username=1;
+    string password=2;
+}
+
+message RegisterResponse{
+    Response response=1;
+    //string message=2;
+
+}
+
+
+
+message LoginRequest{
+    string username=1;
+    string password=2;
+}
+
+message LoginResponse{
+    Response response=1;
+    UserData userdata = 2;
+    //string token = 3;
+}
+
+message ValidateTokenRequest{
+    string token=1;
+
+}
+
+message ValidateTokenResponse{
+    bool success=1;
+    string message=2;
+}
+
+
+message Response{
+    int32 status = 1;
+    string message = 2;
+}
+
+message JoinRequest{
+    string name = 1;
+}
+
+message JoinResponse{
+   Response response = 1;
+}
+
+message GetUser{
+    int32 nothing = 1;
+}
+
+message SendUser{      // response of GetUser
+    //repeated string user = 1;
+    repeated UserData udata =1;
+}
+message SendRequest{        // send message
+    string from    = 1;
+    string to      = 2;
+    string message = 3;
+}
+message Result{
+    int32   id     = 1;
+    string from    = 2;
+    string to      = 3;
+    string message = 4;
+    string time    = 5;
+}
+message SendResponse{       //  response of send message
+    Response response = 1;
+    Result   result = 2;
+}
+
+
+
+message GetMessages{     // get message of
+    string user = 1;
+}
+message SendMessages{     // response of get message of
+    Response response = 1;
+    repeated Result message = 2;
+}
+
+message UploadImageRequest{
+    oneof data {
+        ImageInfo info = 1;
+        bytes chuck_data =2;
+
+    };
+}
+
+message ImageInfo {
+    string user_id =1;
+    string image_type= 2;
+
+}
+message PostRequest{
+  string username = 1;
+  string title = 2;
+  string description = 3;
+  string location = 4;
+  string media_url=5;
+
+
+
+}
+
+message UserData{
+    int32 id = 1;
+    string name = 2;
+    string email  = 3;
+    string media_url = 4;
+    string bio =5;
+    string location=6;
+
+}
+message PostResult{
+    int32 Id=1;
+    string name = 2;
+    string title =3;
+    string description=4;
+    string location =5;
+    string time=6;
+    string media_url = 7;
+
+}
+message PostResponse{
+  Response response =1;
+
+}
+
+message GetPostRequest{
+  string user=1;
+}
+
+message updateRequest{
+  UserData data =1;
+
+}
+message updateResponse{
+  Response response =1;
+  UserData data=2;
+}
+message GetPostResponse{
+  Response response=1;
+  repeated PostResult presult=2;
+}
+
+
+
+service Chat{
+    rpc Register(RegisterRequest) returns (RegisterResponse);
+    rpc Login(LoginRequest) returns (LoginResponse);
+    //rpc ValidateToken(ValidateTokenRequest) returns (ValidateTokenResponse);
+    //rpc Join  (JoinRequest) returns (JoinResponse);
+    rpc Post (PostRequest) returns (PostResponse);
+    rpc Users (GetUser) returns (SendUser);
+    rpc Message (GetMessages) returns (SendMessages);
+    rpc Send (SendRequest) returns (SendResponse);
+    rpc GetPost (GetPostRequest) returns (GetPostResponse);
+    rpc updateUser(updateRequest) returns (updateResponse);
+}
