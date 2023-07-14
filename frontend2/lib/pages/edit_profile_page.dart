@@ -67,7 +67,16 @@ class _EditProfileState extends State<EditProfile> {
             Center(
               child: Padding(
                 padding: const EdgeInsets.only(right: 25.0),
-                child: gestureDetector,
+                child: GestureDetector(
+                  onTap: () => view_model.editProfile(context),
+                  child: Text(
+                    'Save',
+                    style: TextStyle(
+                        fontWeight: FontWeight.w900,
+                        fontSize: 15.0,
+                        color: Theme.of(context).colorScheme.secondary),
+                  ),
+                ),
               ),
             ),
           ],
@@ -76,7 +85,7 @@ class _EditProfileState extends State<EditProfile> {
           children: [
             Center(
               child: GestureDetector(
-                //onTap: () => view_model.pickImage(),
+                onTap: () => view_model.pickImage(),
                 child: Container(
                     decoration: BoxDecoration(
                       color: Colors.white,
@@ -93,23 +102,23 @@ class _EditProfileState extends State<EditProfile> {
                         ),
                       ],
                     ),
-                    child:
-                        /*Padding(
+                    child: view_model.imgLink != null
+                        ? Padding(
                             padding: const EdgeInsets.all(1.0),
                             child: CircleAvatar(
                               radius: 65.0,
                               backgroundImage:
                                   NetworkImage(view_model.imgLink!),
                             ),
-                          )*/
+                          )
                         //iew_model.image == null
-                        Padding(
-                      padding: const EdgeInsets.all(1.0),
-                      child: CircleAvatar(
-                        radius: 65.0,
-                        backgroundImage: AssetImage(photo_url),
-                      ),
-                    )
+                        : Padding(
+                            padding: const EdgeInsets.all(1.0),
+                            child: CircleAvatar(
+                              radius: 65.0,
+                              backgroundImage: AssetImage(photo_url),
+                            ),
+                          )
                     /*: Padding(
                                 padding: const EdgeInsets.all(1),
                                 child: CircleAvatar(
@@ -120,6 +129,8 @@ class _EditProfileState extends State<EditProfile> {
                     ),
               ),
             ),
+            SizedBox(height: 10.0),
+            buildForm(view_model, context)
           ],
         ),
       ),
@@ -127,6 +138,7 @@ class _EditProfileState extends State<EditProfile> {
   }
 
   buildForm(EditProfileViewModel view_model, BuildContext context) {
+    print("I am at #build form#");
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20.0),
       child: Form(
@@ -138,7 +150,7 @@ class _EditProfileState extends State<EditProfile> {
           children: [
             TextFormBuilder(
               enabled: !view_model.loading,
-              initialValue: widget.user!.name,
+              initialValue: user!.name,
               prefix: Ionicons.person_outline,
               hintText: "Username",
               textInputAction: TextInputAction.next,
@@ -147,15 +159,15 @@ class _EditProfileState extends State<EditProfile> {
                 view_model.setUserName(val);
               },
             ),
-            SizedBox(height: 10.0),
-            SizedBox(height: 10.0),
-            Text(
+            const SizedBox(height: 10.0),
+            const SizedBox(height: 10.0),
+            const Text(
               "Bio",
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
             TextFormField(
               maxLines: null,
-              //initialValue: widget.user.bio,
+              initialValue: DemoValue.user_bio,
               autovalidateMode: AutovalidateMode.onUserInteraction,
               validator: (String? value) {
                 if (value!.length > 1000) {
@@ -163,12 +175,12 @@ class _EditProfileState extends State<EditProfile> {
                 }
                 return null;
               },
-              //onSaved: (String? val) {
-              //  viewModel.setBio(val!);
-              //},
-              //onChanged: (String val) {
-              //  view_model.setBio(val);
-              //},
+              onSaved: (String? val) {
+                view_model.setBio(val!);
+              },
+              onChanged: (String val) {
+                view_model.setBio(val);
+              },
             ),
           ],
         ),

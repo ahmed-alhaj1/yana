@@ -213,8 +213,7 @@ class _ProfileState extends State<Profile> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: <Widget>[
-                              buildCount(
-                                  "FOLLOWERS", DemoValue.following_count),
+                              buildCount("POSTS", DemoValue.following_count),
 
                               Padding(
                                 padding: const EdgeInsets.only(bottom: 15.0),
@@ -225,7 +224,7 @@ class _ProfileState extends State<Profile> {
                                 ),
                               ),
 
-                              buildCount("FOLLOWING", 12),
+                              buildCount("FOLLOWERS", 12),
 
                               Padding(
                                 padding: const EdgeInsets.only(bottom: 15.0),
@@ -236,7 +235,7 @@ class _ProfileState extends State<Profile> {
                                 ),
                               ),
 
-                              buildCount("post", 6),
+                              buildCount("FOLLOWINGS", 6),
 
                               ////////////////////////
                               //),
